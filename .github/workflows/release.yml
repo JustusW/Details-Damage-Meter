@@ -3,6 +3,9 @@ on:
     push:
         tags:
             - '**'
+    workflow_dispatch: # on button click
+
+
 jobs:
     release:
         runs-on: ubuntu-latest
