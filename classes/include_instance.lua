@@ -6,14 +6,15 @@
 
 --values added into 'instance_skin_ignored_values' won't be passed when the user exports the profile or exports the skin individually.
 
-
 local _detalhes = 		_G._detalhes
 local SharedMedia = LibStub:GetLibrary("LibSharedMedia-3.0")
+local addonName, Details222 = ...
+local _ = nil
 
 function _detalhes:ResetInstanceConfig (maintainsnap)
-	for key, value in pairs (_detalhes.instance_defaults) do 
-		if (type (value) == "table") then
-			self [key] = Details.CopyTable (value)
+	for key, value in pairs(_detalhes.instance_defaults) do 
+		if (type(value) == "table") then
+			self [key] = Details.CopyTable(value)
 		else
 			self [key] = value
 		end
@@ -57,10 +58,10 @@ _detalhes.instance_skin_ignored_values = {
 }
 
 function _detalhes:ResetInstanceConfigKeepingValues (maintainsnap)
-	for key, value in pairs (_detalhes.instance_defaults) do 
+	for key, value in pairs(_detalhes.instance_defaults) do 
 		if (not _detalhes.instance_skin_ignored_values [key]) then
-			if (type (value) == "table") then
-				self [key] = Details.CopyTable (value)
+			if (type(value) == "table") then
+				self [key] = Details.CopyTable(value)
 			else
 				self [key] = value
 			end
@@ -75,19 +76,19 @@ function _detalhes:ResetInstanceConfigKeepingValues (maintainsnap)
 end
 
 function _detalhes:LoadInstanceConfig()
-	for key, value in pairs (_detalhes.instance_defaults) do 
+	for key, value in pairs(_detalhes.instance_defaults) do 
 		if (self [key] == nil) then
-			if (type (value) == "table") then
-				self [key] = Details.CopyTable (_detalhes.instance_defaults [key])
+			if (type(value) == "table") then
+				self [key] = Details.CopyTable(_detalhes.instance_defaults [key])
 			else
 				self [key] = value
 			end
 			
-		elseif (type (value) == "table") then
-			for key2, value2 in pairs (value) do 
+		elseif (type(value) == "table") then
+			for key2, value2 in pairs(value) do 
 				if (self [key] [key2] == nil) then
-					if (type (value2) == "table") then
-						self [key] [key2] = Details.CopyTable (_detalhes.instance_defaults [key] [key2])
+					if (type(value2) == "table") then
+						self [key] [key2] = Details.CopyTable(_detalhes.instance_defaults [key] [key2])
 					else
 						self [key] [key2] = value2
 					end
@@ -99,13 +100,13 @@ end
 
 _detalhes.instance_defaults = {
 
-	--> click through settings
+	--click through settings
 	clickthrough_toolbaricons = false,
 	clickthrough_rows = false,
 	clickthrough_window = false,
 	clickthrough_incombatonly = true,
 
-	--> window settings
+	--window settings
 		ignore_mass_showhide = false,
 	--skin
 		skin = _detalhes.default_skin_to_use,
@@ -157,6 +158,8 @@ _detalhes.instance_defaults = {
 		menu_icons_alpha = 1,
 		--blackwhiite icons
 		desaturated_menu = false, --mode segment attribute report
+		--menu icons color
+		menu_icons_color = {1, 1, 1},
 		--icons on menu
 		menu_icons = {true, true, true, true, true, false, space = -2, shadow = false}, --mode segment attribute report reset close
 		--menu icons size multiplicator factor
@@ -175,6 +178,9 @@ _detalhes.instance_defaults = {
 			enable_custom_text = false,
 			custom_text = "{name}",
 			show_timer = true,
+			show_timer_always = false, --show the timer even when not in an encounter
+			show_timer_bg = true, --show the timer within battleground, the timer is the elapsed battleground time
+			show_timer_arena = true, ---show the timer within arena, the timer is the elapsed time of the arena match
 		},
 	--auto hide window borders statusbar main menu
 		menu_alpha = {enabled = false, iconstoo = true, onenter = 1, onleave = 1, ignorebars = false},

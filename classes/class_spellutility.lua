@@ -1,16 +1,17 @@
 -- misc ability file
 	local _detalhes = 		_G._detalhes
 	local _
+	local addonName, Details222 = ...
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> local pointers
+--local pointers
 
-	local _setmetatable = setmetatable --lua local
-	local _ipairs = ipairs --lua local
+	local setmetatable = setmetatable --lua local
+	local ipairs = ipairs --lua local
 	local _UnitAura = UnitAura --api local
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> constants
+--constants
 
 	local alvo_da_habilidade	=	_detalhes.alvo_da_habilidade
 	local habilidade_misc		=	_detalhes.habilidade_misc
@@ -19,7 +20,7 @@
 	local container_playernpc	=	_detalhes.container_type.CONTAINER_PLAYERNPC
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> internals
+--internals
 
 	function habilidade_misc:NovaTabela (id, link, token)
 
@@ -52,20 +53,20 @@
 
 	function habilidade_misc:Add (serial, nome, flag, who_nome, token, spellID, spellName)
 
-		--print (self.id, GetSpellInfo (self.id))
+		--print(self.id, GetSpellInfo(self.id))
 	
 		if (spellID == "BUFF_OR_DEBUFF") then
 			
 			if (spellName == "COOLDOWN") then
 				self.counter = self.counter + 1
-				--> target
+				--target
 				self.targets [nome] = (self.targets [nome] or 0) + 1
 				
 			elseif (spellName == "BUFF_UPTIME_REFRESH") then
 				if (self.actived_at and self.actived) then
 					self.uptime = self.uptime + _detalhes._tempo - self.actived_at
 					self.refreshamt = self.refreshamt + 1
-					token.buff_uptime = token.buff_uptime + _detalhes._tempo - self.actived_at --> token = actor misc object
+					token.buff_uptime = token.buff_uptime + _detalhes._tempo - self.actived_at --token = actor misc object
 				end
 				self.actived_at = _detalhes._tempo
 				self.actived = true
@@ -73,7 +74,7 @@
 			elseif (spellName == "BUFF_UPTIME_OUT") then	
 				if (self.actived_at and self.actived) then
 					self.uptime = self.uptime + _detalhes._tempo - self.actived_at
-					token.buff_uptime = token.buff_uptime + _detalhes._tempo - self.actived_at --> token = actor misc object
+					token.buff_uptime = token.buff_uptime + _detalhes._tempo - self.actived_at --token = actor misc object
 				end
 				self.actived = false
 				self.actived_at = nil
@@ -84,7 +85,7 @@
 				self.appliedamt = self.appliedamt + 1
 				
 				if (self.actived_at and self.actived and spellName == "DEBUFF_UPTIME_IN") then
-					--> ja esta ativo em outro mob e jogou num novo
+					--ja esta ativo em outro mob e jogou num novo
 					self.uptime = self.uptime + _detalhes._tempo - self.actived_at
 					token.debuff_uptime = token.debuff_uptime + _detalhes._tempo - self.actived_at
 				end
@@ -103,7 +104,7 @@
 			elseif (spellName == "DEBUFF_UPTIME_OUT") then	
 				if (self.actived_at and self.actived) then
 					self.uptime = self.uptime + _detalhes._tempo - self.actived_at
-					token.debuff_uptime = token.debuff_uptime + _detalhes._tempo - self.actived_at --> token = actor misc object
+					token.debuff_uptime = token.debuff_uptime + _detalhes._tempo - self.actived_at --token = actor misc object
 				end
 				
 				self.activedamt = self.activedamt - 1
@@ -126,12 +127,12 @@
 				self.interrompeu_oque [spellID] = self.interrompeu_oque [spellID] + 1
 			end
 			
-			--> target
+			--target
 			self.targets [nome] = (self.targets [nome] or 0) + 1
 		
 		elseif (token == "SPELL_RESURRECT") then
 			self.ress = (self.ress or 0) + 1
-			--> target
+			--target
 			self.targets [nome] = (self.targets [nome] or 0) + 1	
 			
 		elseif (token == "SPELL_DISPEL" or token == "SPELL_STOLEN") then
@@ -143,7 +144,7 @@
 				self.dispell_oque [spellID] = self.dispell_oque [spellID] + 1
 			end
 
-			--> target
+			--target
 			self.targets [nome] = (self.targets [nome] or 0) + 1		
 			
 		elseif (token == "SPELL_AURA_BROKEN_SPELL" or token == "SPELL_AURA_BROKEN") then
@@ -155,7 +156,7 @@
 				self.cc_break_oque [spellID] = self.cc_break_oque [spellID] + 1
 			end
 			
-			--> target
+			--target
 			self.targets [nome] = (self.targets [nome] or 0) + 1	
 		end
 

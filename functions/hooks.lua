@@ -15,7 +15,8 @@
 	
 	local _detalhes = _G._detalhes
 	local _
-	
+	local addonName, Details222 = ...
+
 	_detalhes.hooks ["HOOK_COOLDOWN"] = {}
 	_detalhes.hooks ["HOOK_DEATH"] = {}
 	_detalhes.hooks ["HOOK_BATTLERESS"] = {}
@@ -29,9 +30,9 @@
 			return false, "Invalid hook type."
 		end
 		
-		for _, this_func in ipairs (_detalhes.hooks [hook_type]) do
+		for _, this_func in ipairs(_detalhes.hooks [hook_type]) do
 			if (this_func == func) then
-				--> already installed
+				--already installed
 				return
 			end
 		end
@@ -50,7 +51,7 @@
 			return false, "Invalid hook type."
 		end
 		
-		for index, this_func in ipairs (_detalhes.hooks [hook_type]) do 
+		for index, this_func in ipairs(_detalhes.hooks [hook_type]) do 
 		
 			if (this_func == func) then
 			

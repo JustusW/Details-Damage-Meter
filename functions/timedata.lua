@@ -1,27 +1,25 @@
 
-
-
-
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> basic stuff
-
 	local _
 	local _detalhes = _G._detalhes
-	local Loc = LibStub ("AceLocale-3.0"):GetLocale ( "Details" )
-	
-	--> mantain the enabled time captures
+	local Loc = LibStub("AceLocale-3.0"):GetLocale ( "Details" )
+	local addonName, Details222 = ...
+
+	--create a namespace
+	Details222.TimeCapture = {}
+
+	--mantain the enabled time captures
 	_detalhes.timeContainer = {}
 	_detalhes.timeContainer.Exec = {}
 	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> local pointers
+--local pointers
 	local ipairs = ipairs
 	local _math_floor = math.floor
 	local _pcall = pcall
 	local time = time
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> constants
+--constants
 
 	local INDEX_NAME = 1
 	local INDEX_FUNCTION = 2
@@ -34,16 +32,16 @@
 	local DEFAULT_USER_MATRIX = {max_value = 0, last_value = 0}
 	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> register and unregister captures
+--register and unregister captures
 
 
 	function _detalhes:TimeDataUpdate (index_or_name, name, func, matrix, author, version, icon, is_enabled)
 		
 		local this_capture
-		if (type (index_or_name) == "number") then
+		if (type(index_or_name) == "number") then
 			this_capture = _detalhes.savedTimeCaptures [index_or_name]
 		else
-			for index, t in ipairs (_detalhes.savedTimeCaptures) do
+			for index, t in ipairs(_detalhes.savedTimeCaptures) do
 				if (t [INDEX_NAME] == index_or_name) then
 					this_capture = t
 				end
@@ -55,7 +53,7 @@
 		end
 		
 		if (this_capture.do_not_save) then
-			return _detalhes:Msg ("This capture belongs to a plugin and cannot be edited.")
+			return _detalhes:Msg("This capture belongs to a plugin and cannot be edited.")
 		end
 		
 		this_capture [INDEX_NAME] = name or this_capture [INDEX_NAME]
@@ -82,31 +80,31 @@
 	--matrix = table containing {max_value = 0, last_value = 0}
 	function _detalhes:TimeDataRegister (name, func, matrix, author, version, icon, is_enabled, force_no_save)
 	
-		--> check name
+		--check name
 		if (not name) then
 			return "Couldn't register the time capture, name was nil."
 		end
 		
-		--> check if the name already exists
-		for index, t in ipairs (_detalhes.savedTimeCaptures) do
+		--check if the name already exists
+		for index, t in ipairs(_detalhes.savedTimeCaptures) do
 			if (t [INDEX_NAME] == name) then
 				return "Couldn't register the time capture, name already registred."
 			end
 		end
 		
-		--> check function
+		--check function
 		if (not func) then
 			return "Couldn't register the time capture, invalid function."
 		end
 		
 		local no_save = nil
-		--> passed a function means that this isn't came from a user
-		--> so the plugin register the capture every time it loads.
-		if (type (func) == "function") then
+		--passed a function means that this isn't came from a user
+		--so the plugin register the capture every time it loads.
+		if (type(func) == "function") then
 			no_save = true
 		
-		--> this a custom capture from a user, so we register a default user table for matrix
-		elseif (type (func) == "string") then
+		--this a custom capture from a user, so we register a default user table for matrix
+		elseif (type(func) == "string") then
 			matrix = DEFAULT_USER_MATRIX
 			
 		end
@@ -115,8 +113,8 @@
 			no_save = true
 		end
 		
-		--> check matrix
-		if (not matrix or type (matrix) ~= "table") then
+		--check matrix
+		if (not matrix or type(matrix) ~= "table") then
 			return "Couldn't register the time capture, matrix was invalid."
 		end
 		
@@ -124,7 +122,7 @@
 		version = version or "v1.0"
 		icon = icon or [[Interface\InventoryItems\WoWUnknownItem01]]
 		
-		tinsert (_detalhes.savedTimeCaptures, {name, func, matrix, author, version, icon, is_enabled, do_not_save = no_save})
+		tinsert(_detalhes.savedTimeCaptures, {name, func, matrix, author, version, icon, is_enabled, do_not_save = no_save})
 		
 		if (_G.DetailsOptionsWindow and _G.DetailsOptionsWindow:IsShown()) then
 			DetailsOptionsWindowTab17UserTimeCapturesFillPanel.MyObject:Refresh()
@@ -134,17 +132,17 @@
 		
 	end
 	
-	--> unregister
+	--unregister
 	function _detalhes:TimeDataUnregister (name)
-		if (type (name) == "number") then
-			tremove (_detalhes.savedTimeCaptures, name)
+		if (type(name) == "number") then
+			tremove(_detalhes.savedTimeCaptures, name)
 			if (_G.DetailsOptionsWindow and _G.DetailsOptionsWindow:IsShown()) then
 				DetailsOptionsWindowTab17UserTimeCapturesFillPanel.MyObject:Refresh()
 			end
 		else
-			for index, t in ipairs (_detalhes.savedTimeCaptures) do
+			for index, t in ipairs(_detalhes.savedTimeCaptures) do
 				if (t [INDEX_NAME] == name) then
-					tremove (_detalhes.savedTimeCaptures, index)
+					tremove(_detalhes.savedTimeCaptures, index)
 					if (_G.DetailsOptionsWindow and _G.DetailsOptionsWindow:IsShown()) then
 						DetailsOptionsWindowTab17UserTimeCapturesFillPanel.MyObject:Refresh()
 					end
@@ -155,12 +153,12 @@
 		end
 	end
 	
-	--> cleanup when logout
+	--cleanup when logout
 	function _detalhes:TimeDataCleanUpTemporary()
 		local new_table = {}
-		for index, t in ipairs (_detalhes.savedTimeCaptures) do
+		for index, t in ipairs(_detalhes.savedTimeCaptures) do
 			if (not t.do_not_save) then
-				tinsert (new_table, t)
+				tinsert(new_table, t)
 			end
 		end
 		_detalhes.savedTimeCaptures = new_table
@@ -168,57 +166,57 @@
 
 	local tick_time = 0
 	
-	--> starting a combat
+	--starting a combat
 	function _detalhes:TimeDataCreateCombatTables()
 		
-		--> create capture table
+		--create capture table
 		local data_captured = {}
 	
-		--> drop the last capture exec table without wiping
+		--drop the last capture exec table without wiping
 		local exec = {}
 		_detalhes.timeContainer.Exec = exec
 		
-		_detalhes:SendEvent ("COMBAT_CHARTTABLES_CREATING")
+		_detalhes:SendEvent("COMBAT_CHARTTABLES_CREATING")
 		
-		--> build the exec table
-		for index, t in ipairs (_detalhes.savedTimeCaptures) do
+		--build the exec table
+		for index, t in ipairs(_detalhes.savedTimeCaptures) do
 			if (t [INDEX_ENABLED]) then
 			
 				local data = {}
 				data_captured [t [INDEX_NAME]] = data
 			
-				if (type (t [INDEX_FUNCTION]) == "string") then
-					--> user
+				if (type(t [INDEX_FUNCTION]) == "string") then
+					--user
 					local func, errortext = loadstring (t [INDEX_FUNCTION])
 					if (func) then
 						DetailsFramework:SetEnvironment(func)
-						tinsert (exec, { func = func, data = data, attributes = Details.CopyTable (t [INDEX_MATRIX]), is_user = true })
+						tinsert(exec, { func = func, data = data, attributes = Details.CopyTable(t [INDEX_MATRIX]), is_user = true })
 					else
-						_detalhes:Msg ("|cFFFF9900error compiling script for time data (charts)|r: ", errortext)
+						_detalhes:Msg("|cFFFF9900error compiling script for time data (charts)|r: ", errortext)
 					end
 				else
-					--> plugin
+					--plugin
 					local func = t [INDEX_FUNCTION]
 					DetailsFramework:SetEnvironment(func)
-					tinsert (exec, { func = func, data = data, attributes = Details.CopyTable (t [INDEX_MATRIX]) })
+					tinsert(exec, { func = func, data = data, attributes = Details.CopyTable(t [INDEX_MATRIX]) })
 				end
 			
 			end
 		end
 		
-		_detalhes:SendEvent ("COMBAT_CHARTTABLES_CREATED")
+		_detalhes:SendEvent("COMBAT_CHARTTABLES_CREATED")
 	
 		tick_time = 0
 	
-		--> return the capture table the to combat object
+		--return the capture table the to combat object
 		return data_captured
 	end
 	
-	local exec_user_func = function (func, attributes, data, this_second)
+	local exec_user_func = function(func, attributes, data, this_second)
 		
 		local okey, result = _pcall (func, attributes)
 		if (not okey) then
-			_detalhes:Msg ("|cFFFF9900error on chart script function|r:", result)
+			_detalhes:Msg("|cFFFF9900error on chart script function|r:", result)
 			result = 0
 		end
 		
@@ -238,14 +236,14 @@
 	
 		tick_time = tick_time + 1
 	
-		for index, t in ipairs (_detalhes.timeContainer.Exec) do 
+		for index, t in ipairs(_detalhes.timeContainer.Exec) do 
 		
 			if (t.is_user) then
-				--> by a user
+				--by a user
 				exec_user_func (t.func, t.attributes, t.data, tick_time)
 				
 			else
-				--> by a plugin
+				--by a plugin
 				t.func (t.attributes, t.data, tick_time)
 				
 			end
@@ -255,7 +253,7 @@
 	end
 	
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
---> broker dps stuff
+--broker dps stuff
 
 	local ToKFunctions = _detalhes.ToKFunctions
 
@@ -263,21 +261,21 @@
 		-- raid dps [1]
 		function()
 			local combat = _detalhes.tabela_vigente
-			local time = combat:GetCombatTime()
-			if (not time or time == 0) then
+			local combatTime = combat:GetCombatTime()
+			if (not combatTime or combatTime == 0) then
 				return 0
 			else
-				return ToKFunctions [_detalhes.minimap.text_format] (_, combat.totals_grupo[1] / time)
+				return ToKFunctions [_detalhes.minimap.text_format] (_, combat.totals_grupo[1] / combatTime)
 			end
 		end,
 		-- raid hps [2]
 		function()
 			local combat = _detalhes.tabela_vigente
-			local time = combat:GetCombatTime()
-			if (not time or time == 0) then
+			local combatTime = combat:GetCombatTime()
+			if (not combatTime or combatTime == 0) then
 				return 0
 			else
-				return ToKFunctions [_detalhes.minimap.text_format] (_, combat.totals_grupo[2] / time)
+				return ToKFunctions [_detalhes.minimap.text_format] (_, combat.totals_grupo[2] / combatTime)
 			end
 		end
 	}
@@ -285,7 +283,7 @@
 
 	local get_combat_time = function()
 		local combat_time = _detalhes.tabela_vigente:GetCombatTime()
-		local minutos, segundos = _math_floor (combat_time / 60), _math_floor (combat_time % 60)
+		local minutos, segundos = _math_floor(combat_time / 60), _math_floor(combat_time % 60)
 		if (segundos < 10) then
 			segundos = "0" .. segundos
 		end
@@ -297,7 +295,7 @@
 		damage_container:SortByKey ("total")
 		
 		local pos = 1
-		for index, actor in ipairs (damage_container._ActorTable) do
+		for index, actor in ipairs(damage_container._ActorTable) do
 			if (actor.grupo) then
 				if (actor.nome == _detalhes.playername) then
 					return pos
@@ -314,7 +312,7 @@
 		heal_container:SortByKey ("total")
 
 		local pos = 1
-		for index, actor in ipairs (heal_container._ActorTable) do
+		for index, actor in ipairs(heal_container._ActorTable) do
 			if (actor.grupo) then
 				if (actor.nome == _detalhes.playername) then
 					return pos
@@ -332,7 +330,7 @@
 		
 		local first
 		local first_index
-		for index, actor in ipairs (damage_container._ActorTable) do
+		for index, actor in ipairs(damage_container._ActorTable) do
 			if (actor.grupo) then
 				first = actor
 				first_index = index
@@ -378,7 +376,7 @@
 		
 		local first
 		local first_index
-		for index, actor in ipairs (heal_container._ActorTable) do
+		for index, actor in ipairs(heal_container._ActorTable) do
 			if (actor.grupo) then
 				first = actor
 				first_index = index
@@ -419,7 +417,7 @@
 	end
 	
 	local get_player_dps = function()
-		local damage_player = _detalhes.tabela_vigente (1, _detalhes.playername)
+		local damage_player = _detalhes.tabela_vigente(1, _detalhes.playername)
 		if (damage_player) then
 			if (_detalhes.time_type == 1) then --activity time
 				local combat_time = damage_player:Tempo()
@@ -443,7 +441,7 @@
 	end
 	
 	local get_player_hps = function()
-		local heal_player = _detalhes.tabela_vigente (2, _detalhes.playername)
+		local heal_player = _detalhes.tabela_vigente(2, _detalhes.playername)
 		if (heal_player) then
 			if (_detalhes.time_type == 1) then --activity time
 				local combat_time = heal_player:Tempo()
@@ -494,7 +492,7 @@
 	end
 	
 	local get_player_heal = function()
-		local heal_player = _detalhes.tabela_vigente (2, _detalhes.playername)
+		local heal_player = _detalhes.tabela_vigente(2, _detalhes.playername)
 		if (heal_player) then
 			return ToKFunctions [_detalhes.minimap.text_format] (_, heal_player.total)
 		else
@@ -508,17 +506,17 @@
 			return
 		end
 		
-		text = text:gsub ("{dmg}", get_player_damage)
-		text = text:gsub ("{rdps}", get_raid_dps)
-		text = text:gsub ("{rhps}", get_raid_hps)
-		text = text:gsub ("{dps}", get_player_dps)
-		text = text:gsub ("{heal}", get_player_heal)
-		text = text:gsub ("{hps}", get_player_hps)
-		text = text:gsub ("{time}", get_combat_time)
-		text = text:gsub ("{dpos}", get_damage_position)
-		text = text:gsub ("{hpos}", get_heal_position)
-		text = text:gsub ("{ddiff}", get_damage_diff)
-		text = text:gsub ("{hdiff}", get_heal_diff)
+		text = text:gsub("{dmg}", get_player_damage)
+		text = text:gsub("{rdps}", get_raid_dps)
+		text = text:gsub("{rhps}", get_raid_hps)
+		text = text:gsub("{dps}", get_player_dps)
+		text = text:gsub("{heal}", get_player_heal)
+		text = text:gsub("{hps}", get_player_hps)
+		text = text:gsub("{time}", get_combat_time)
+		text = text:gsub("{dpos}", get_damage_position)
+		text = text:gsub("{hpos}", get_heal_position)
+		text = text:gsub("{ddiff}", get_damage_diff)
+		text = text:gsub("{hdiff}", get_heal_diff)
 
 		return text
 	end
@@ -528,12 +526,97 @@
 	end
 	
 	function _detalhes:SetDataBrokerText (text)
-		if (type (text) == "string") then
+		if (type(text) == "string") then
 			_detalhes.data_broker_text = text
 			_detalhes:BrokerTick()
-		elseif (text == nil or (type (text) == "boolean" and not text)) then
+		elseif (text == nil or (type(text) == "boolean" and not text)) then
 			_detalhes.data_broker_text = ""
 			_detalhes:BrokerTick()
 		end
 	end
 	
+
+
+------------------------------------------------------------------------------------------------------
+--regular spell timers
+Details222.TimeCapture.Timers = {}
+local damageContainer
+local healingContainer
+local timeElapsed = 0
+
+local combatTimeTicker = function()
+	timeElapsed = timeElapsed + 1
+end
+
+local damageCapture = function(tickerObject)
+	local actorObject = tickerObject.ActorObject
+	if (not actorObject) then
+		tickerObject.ActorObject = damageContainer:GetActor(tickerObject.unitName)
+		if (not actorObject) then
+			return
+		end
+	end
+
+	for spellId, spellTable in pairs(actorObject.spells._ActorTable) do
+		local totalDamage = spellTable.total
+		if (totalDamage) then
+			if (not spellTable.ChartData) then
+				spellTable.ChartData = {}
+			end
+			spellTable.ChartData[timeElapsed] = totalDamage
+		end
+	end
+end
+
+function Details222.TimeCapture.StartCombatTimer(combatObject)
+	timeElapsed = 0
+	damageContainer = combatObject[1]
+	healingContainer = combatObject[2]
+
+	Details222.TimeCapture.CombatObject = combatObject
+	Details222.TimeCapture.CombatTimeTicker = C_Timer.NewTicker(1, combatTimeTicker)
+
+	--debug: starting only for the player
+	Details222.TimeCapture.Start(UnitName("player"), DETAILS_ATTRIBUTE_DAMAGE)
+end
+
+--combat ended on Details! end
+function Details222.TimeCapture.StopCombat()
+	local combatTimeTickerObject = Details222.TimeCapture.CombatTimeTicker
+	if (combatTimeTickerObject and not combatTimeTickerObject:IsCancelled()) then
+		combatTimeTickerObject:Cancel()
+		Details222.TimeCapture.CombatTimeTicker = nil
+	end
+
+	Details222.TimeCapture.StopAllUnitTimers()
+end
+
+--start a capture for a specific unit
+function Details222.TimeCapture.Start(unitName, attribute)
+	local tickerObject = C_Timer.NewTicker(3, damageCapture)
+	tickerObject.unitName = unitName
+	Details222.TimeCapture.Timers[unitName] = tickerObject
+end
+
+function Details222.TimeCapture.StopAllUnitTimers()
+	for unitName, tickerObject in pairs(Details222.TimeCapture.Timers) do
+		if (not tickerObject:IsCancelled()) then --why do I need to stop here, it's stopping in the unit itself right below
+			tickerObject:Cancel()
+		end
+		Details222.TimeCapture.Stop(unitName)
+	end
+	wipe(Details222.TimeCapture.Timers)
+end
+
+--can be a manual stop or from the stop all unit frames (function above)
+function Details222.TimeCapture.Stop(unitName)
+	local tickerObject = Details222.TimeCapture.Timers[unitName]
+	if (tickerObject and not tickerObject:IsCancelled()) then
+		tickerObject:Cancel()
+		Details222.TimeCapture.Timers[unitName] = nil
+	end
+end
+
+function Details222.TimeCapture.GetChartDataFromSpell(spellTable)
+	return spellTable.ChartData
+end

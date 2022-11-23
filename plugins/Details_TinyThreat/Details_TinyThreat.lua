@@ -857,7 +857,7 @@ function ThreatMeter:OnEvent (_, event, ...)
 				local MINIMAL_DETAILS_VERSION_REQUIRED = 1
 
 				--> Install
-				local install, saveddata = _G._detalhes:InstallPlugin ("RAID", Loc ["STRING_PLUGIN_NAME"], "Interface\\Icons\\Ability_Druid_Cower", ThreatMeter, "DETAILS_PLUGIN_TINY_THREAT", MINIMAL_DETAILS_VERSION_REQUIRED, "Terciob", "v2.01")
+				local install, saveddata = _G._detalhes:InstallPlugin ("RAID", Loc ["STRING_PLUGIN_NAME"], "Interface\\Icons\\Ability_Druid_Cower", ThreatMeter, "DETAILS_PLUGIN_TINY_THREAT", MINIMAL_DETAILS_VERSION_REQUIRED, "Terciob", "v2.20")
 				if (type (install) == "table" and install.error) then
 					print (install.error)
 				end
@@ -895,7 +895,7 @@ function ThreatMeter:OnEvent (_, event, ...)
 				ThreatMeter.options = ThreatMeter.saveddata
 
 				--> Register slash commands
-				SLASH_DETAILS_TINYTHREAT1, SLASH_DETAILS_TINYTHREAT2 = "/tinythreat", "/tt"
+				SLASH_DETAILS_TINYTHREAT1 = "/tinythreat"
 
 				function SlashCmdList.DETAILS_TINYTHREAT (msg, editbox)
 
